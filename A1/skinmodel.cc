@@ -21,6 +21,9 @@ SkinModel::~SkinModel()
 void SkinModel::startTraining()
 {
     //--- IMPLEMENT THIS ---//
+	int* minB = 255, maxB = 0;
+	int* minG = 255, maxG = 0;
+	int* minR = 255, maxR = 0;
 }
 
 /// Add a new training image/mask pair.  The mask should
@@ -31,6 +34,24 @@ void SkinModel::startTraining()
 void SkinModel::train(const cv::Mat3b& img, const cv::Mat1b& mask)
 {
 	//--- IMPLEMENT THIS ---//
+	
+	cv::Mat1b imgB = cv::Mat1b::zeros(img.rows, img.cols);
+	cv::Mat1b imgG = cv::Mat1b::zeros(img.rows, img.cols);
+	cv::Mat1b imgR = cv::Mat1b::zeros(img.rows, img.cols);
+
+	for (int row = 0; row < img.rows; ++row) {
+		for (int col = 0; col < img.cols; ++col) {
+			cv::Vec3b bgr = img(row, col);
+			if (mask(row, col) == 255) {
+				minB = min(minB, bgr[0]);
+				maxB = max(maxB, bgr[0]);
+				minG = min(minG, bgr[1]);
+				maxG = max(maxG, bgr[1]);
+				minR = min(minR, bgr[2]);
+				maxR = max(maxR, bgr[2]);
+			}
+		}
+	}
 }
 
 /// Finish the training.  This finalizes the model.  Do not call
@@ -57,7 +78,17 @@ cv::Mat1b SkinModel::classify(const cv::Mat3b& img)
     for (int row = 0; row < img.rows; ++row) {
         for (int col = 0; col < img.cols; ++col) {
 
-			if (true)
+			cv::Vec3b bgr = img(row, col);
+			
+			if ((bgr[0] >= minB && bgr[0] <= maxB) && (bgr[1] >= minG && bgr[1] <= maxG) && (bgr[2] >= minR && bgr[2] <= maxR)) {
+				skin(row, col) = 255
+			}
+			else {
+				skin(row, col) = 0
+			}		
+					
+			
+			if (false)
 				skin(row, col) = rand()%256;
 
 			if (false)
